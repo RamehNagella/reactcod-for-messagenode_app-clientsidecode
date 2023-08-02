@@ -8,7 +8,7 @@ import Paginator from "../../components/Paginator/Paginator";
 import Loader from "../../components/Loader/Loader";
 import ErrorHandler from "../../components/ErrorHandler/ErrorHandler";
 import "./Feed.css";
-import post from "../../components/Feed/Post/Post";
+// import post from "../../components/Feed/Post/Post";
 
 class Feed extends Component {
   state = {
@@ -51,7 +51,12 @@ class Feed extends Component {
       page--;
       this.setState({ postPage: page });
     }
-    fetch("http://localhost:8080/feed/posts?page=" + page)
+    fetch("http://localhost:8080/feed/posts?page=" + page,{
+    //   //adding token to the posts(this token can be added in 3 ways 1.using query parameters in the url 2.adding token to the body(but get()method cannot have body) 3. using header)
+      headers:{
+        Authorization:'Bearer ' + this.props.token  
+      }
+    })
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Failed to fetch posts.");
@@ -130,7 +135,10 @@ class Feed extends Component {
       //   title: postData.title,
       //   content: postData.content
       // })
-      body: formData
+      body: formData,
+      headers:{
+        Authorization:'Bearer ' + this.props.token  
+      }
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
@@ -184,7 +192,10 @@ class Feed extends Component {
     console.log(">>>>", postId);
     this.setState({ postsLoading: true });
     fetch("http://localhost:8080/feed/post/" + postId, {
-      method: "DELETE"
+      method: "DELETE",
+      headers:{
+        Authorization:'Bearer ' + this.props.token  
+      }
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
