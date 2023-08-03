@@ -23,7 +23,11 @@ class Feed extends Component {
   };
 
   componentDidMount() {
-    fetch("URL")
+    fetch("http://localhost:8080/auth/status",{
+      headers:{
+        Authorization: "Bearer " + this.props.token
+      }
+    })
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Failed to fetch user status.");
@@ -52,11 +56,11 @@ class Feed extends Component {
       this.setState({ postPage: page });
     }
     fetch("http://localhost:8080/feed/posts?page=" + page,{
-    //   //adding token to the posts(this token can be added in 3 ways 1.using query parameters in the url 2.adding token to the body(but get()method cannot have body) 3. using header)
-      headers:{
-        Authorization:'Bearer ' + this.props.token  
-      }
-    })
+      //   //adding token to the posts(this token can be added in 3 ways 1.using query parameters in the url 2.adding token to the body(but get()method cannot have body) 3. using header)
+        headers:{
+          Authorization:'Bearer ' + this.props.token  
+        }
+      })
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Failed to fetch posts.");
@@ -77,7 +81,16 @@ class Feed extends Component {
 
   statusUpdateHandler = (event) => {
     event.preventDefault();
-    fetch("URL")
+    fetch("http://localhost:8080/auth/status",{
+      method:'PATCH',
+      headers:{
+        Authorization: "Bearer " + this.props.token,
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        status:this.state.status
+      })
+    })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Can't update status!");
@@ -139,6 +152,7 @@ class Feed extends Component {
       headers:{
         Authorization:'Bearer ' + this.props.token  
       }
+
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
@@ -191,8 +205,8 @@ class Feed extends Component {
   deletePostHandler = (postId) => {
     console.log(">>>>", postId);
     this.setState({ postsLoading: true });
-    fetch("http://localhost:8080/feed/post/" + postId, {
-      method: "DELETE",
+    fetch("http://localhost:8080/feed/post/" + postId,{
+      method:'DELETE',
       headers:{
         Authorization:'Bearer ' + this.props.token  
       }
